@@ -1,0 +1,136 @@
+/*
+==========================
+FONT
+==========================
+*/
+
+$h1--larger: 72px;
+$h1: 60px;
+
+$h2: 48px;
+
+$h3--larger: 36px;
+$h3: 30px;
+
+$h4--larger: 24px;
+$h4: 20px;
+
+$h5--larger: 18px;
+$h5: 16px;
+
+$h6--larger: 14px;
+$h6: 12px;
+
+/*
+==========================
+COLORS
+==========================
+*/
+$grey-900: #333333;
+$grey-800: #4f4f4f;
+$grey-700: #7f7f7f;
+$grey-600: rgb(158, 158, 158);
+$grey-500: #bbbbbb;
+$grey-400: #d9d9d9;
+$grey-300: #e6e6e6;
+$grey-200: #efefef;
+$grey-100: #f7f8fc;
+
+$blue-100: #eff2fa;
+$blue-200: rgb(184, 206, 224);
+$blue-300: #a2aec3;
+$blue-350: rgb(127, 149, 185);
+$blue-400: rgb(69, 140, 199);
+$blue-500: #466d98;
+$blue-600: rgb(54, 91, 131);
+$blue-700: rgb(64, 96, 131);
+$blue-800: rgb(54, 81, 110);
+$blue-900: rgb(77, 91, 105);
+
+$purple-1000: #19216c;
+$purple-900: #2d3a8c;
+$purple-800: #35469c;
+$purple-700: #4055a8;
+$purple-600: #4c63b6;
+$purple-500: #647acb;
+$purple-400: #7b93db;
+$purple-300: #98aeeb;
+$purple-200: #bed0f7;
+$purple-100: #e0e8f9;
+
+$red-1000: #610316;
+$red-900: #8a041a;
+$red-800: #ab091e;
+$red-700: #cf1124;
+$red-600: #e12d39;
+$red-500: #ef4e4e;
+$red-400: #f86a6a;
+$red-300: #ff9b9b;
+$red-200: #ffbdbd;
+$red-100: #ffe3e3;
+
+$green-1000: #014d40;
+$green-900: #0c6b58;
+$green-800: #147d64;
+$green-700: #199473;
+$green-600: #27ab83;
+$green-500: #3ebd93;
+$green-400: #65d6ad;
+$green-300: #8eedc7;
+$green-200: #c6f7e2;
+$green-100: #effcf6;
+
+$attention-red: #db4437;
+$attention-red--light: rgb(250, 230, 228);
+$success-green: rgb(117, 195, 128);
+$success-green--light: rgb(220, 250, 224);
+
+$theme-color: $purple-600;
+$theme-color--light: $purple-500;
+$theme-color--dark: $purple-700;
+$theme-color--darker: $purple-800;
+$theme-color--darkest: $purple-900;
+
+/*
+==========================
+SCREEN SIZES
+==========================
+*/
+$max-width: 1280px;
+$screen-xs: 375px;
+$screen-sm: 640px;
+$screen-md: 768px;
+$screen-lg: 1024px;
+$screen-xl: 1280px;
+
+/*
+==========================
+STYLING
+==========================
+*/
+$box-shadow: 0px 3px 6px $grey-400;
+$box-shadow-blue: 0px 3px 6px $grey-400;
+$box-shadow--hover: 3px 3px 4px rgba(0, 0, 0, 0.2);
+
+/*
+==========================
+Z-INDEXES
+==========================
+*/
+$z-dropdown: 200;
+$z-header: 14;
+$z-middle: 10;
+$z-default: 1;
+$z-below: -1;
+
+/*
+==========================
+PAGE
+==========================
+*/
+@mixin page {
+  background-color: $blue-100;
+  min-width: 100%;
+  min-height: 100vh;
+  padding: 0px 30px;
+}
