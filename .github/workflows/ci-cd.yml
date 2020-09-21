@@ -24,3 +24,9 @@ jobs:
 
     - name: Run test
       run: npm run test
+      
+    - name: Publish
+      uses: netlify/actions/build@master
+      env:
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -23,8 +23,8 @@ export const LandingPage = ({
 
   const chatServiceEndpoint =
     process.env.NODE_ENV === 'production'
-      ? 'ws://intense-plateau-11880.herokuapp.com'
-      : 'ws://localhost:8080'
+      ? 'wss://intense-plateau-11880.herokuapp.com:34000'
+      : 'ws://localhost:34000'
 
   const websocket = new WebSocket(chatServiceEndpoint)
 
