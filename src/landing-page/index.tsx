@@ -1,39 +1,19 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import './LandingPage.scss'
 
 export const LandingPage = ({
-  displayName,
-  setDisplayName
+  setUsername
 }: {
-  displayName: string
-  setDisplayName: (name: string) => void
+  setUsername: (name: string) => void
 }): JSX.Element => {
+  const [input, setInput] = useState<string>('')
   const history = useHistory()
-  const inputName = 'displayNameInput'
-
-  const handleInputChange = (e: any): void => {
-    e.preventDefault()
-    setDisplayName(e.currentTarget.value)
-  }
+  const inputName = 'usernameInput'
 
   const handleSubmit = (): void => {
+    setUsername(input)
     history.push('/chat')
-  }
-
-  const chatServiceEndpoint =
-    process.env.NODE_ENV === 'production'
-      ? 'wss://intense-plateau-11880.herokuapp.com:34000'
-      : 'ws://localhost:34000'
-
-  const websocket = new WebSocket(chatServiceEndpoint)
-
-  websocket.onopen = function () {
-    console.log('WebSocket Client Connected')
-    websocket.send('Hi this is web client.')
-  }
-  websocket.onmessage = function (e) {
-    console.log("Received: '" + e.data + "'")
   }
 
   return (
@@ -43,8 +23,8 @@ export const LandingPage = ({
         <input
           id={inputName}
           name={inputName}
-          value={displayName}
-          onChange={e => handleInputChange(e)}
+          value={input}
+          onChange={e => setInput(e.currentTarget.value)}
         />
       </label>
       <button onClick={() => handleSubmit()}>Enter Chat Room</button>

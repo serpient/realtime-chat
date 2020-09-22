@@ -1,10 +1,17 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import io from 'socket.io-client'
 import { LandingPage } from './landing-page'
+import { ChatPage } from './chat-page'
 import './App.scss'
 
 function App() {
+  const [username, setUsername] = useState<string>(localStorage.getItem('chat-username') || '')
+
+  useEffect(() => {
+    localStorage.setItem('chat-username', username)
+  }, [username])
+
   const chatServiceEndpoint =
     process.env.NODE_ENV === 'production'
       ? 'wss://intense-plateau-11880.herokuapp.com:34000'
@@ -31,15 +38,16 @@ function App() {
   socket.on('disconnect', function () {
     console.log('WebSocket Client Disconnected')
   })
+
   return (
     <BrowserRouter>
       <div className="App">
         <Switch>
           <Route exact path="/chat">
-            <h1>Chat Room</h1>
+            <ChatPage username={username} />
           </Route>
           <Route path="/">
-            <LandingPage displayName={displayName} setDisplayName={setDisplayName} />
+            <LandingPage setUsername={setUsername} />
           </Route>
         </Switch>
       </div>

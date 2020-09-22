@@ -6,6 +6,17 @@
   height: 100vh;
   background-color: white;
 
+  .visually-hidden {
+    border: 0;
+    clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+
   button {
     color: white;
     font-size: 16px;
