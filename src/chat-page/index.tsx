@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Messages } from '../App'
 import './ChatPage.scss'
 
 const chatRooms = [
@@ -20,7 +21,15 @@ const chatRooms = [
   }
 ]
 
-export const ChatPage = ({ username }: { username: string }): JSX.Element => {
+export const ChatPage = ({
+  username,
+  sendMessageHandler,
+  chatMessages
+}: {
+  username: string
+  sendMessageHandler: Function
+  chatMessages: Messages[]
+}): JSX.Element => {
   const [currentRoom, setCurrentRoom] = useState<string>()
   const [input, setInput] = useState<string>('')
   const inputName = 'chatInput'
@@ -34,7 +43,8 @@ export const ChatPage = ({ username }: { username: string }): JSX.Element => {
     const ENTER_KEY = 13
 
     if (e.which === ENTER_KEY) {
-      // send messages through to socket
+      sendMessageHandler(input)
+      setInput('')
     }
   }
 
@@ -59,7 +69,22 @@ export const ChatPage = ({ username }: { username: string }): JSX.Element => {
         ))}
       </aside>
       <section>
-        <div className="chat-messages"></div>
+        <div id={`chat_messages`} className="chat-messages">
+          {chatMessages.map((msg, idx) => {
+            return (
+              <div
+                className={`chat-messages--message ${
+                  msg.username === username
+                    ? 'chat-messages--mesage-right'
+                    : 'chat-messages--mesage-left'
+                }`}
+                key={`${msg}_${idx}`}
+              >
+                <p>{msg.message}</p>
+              </div>
+            )
+          })}
+        </div>
         <div className="chat-input--container">
           <label htmlFor={inputName}>
             <p className="visually-hidden">Chat Message Input</p>

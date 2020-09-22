@@ -5,8 +5,14 @@ import { LandingPage } from './landing-page'
 import { ChatPage } from './chat-page'
 import './App.scss'
 
+export interface Messages {
+  username: string
+  message: string
+}
+
 function App() {
   const [username, setUsername] = useState<string>(localStorage.getItem('chat-username') || '')
+  const [chatMessages, setChatMessages] = useState<Messages[]>([])
 
   useEffect(() => {
     localStorage.setItem('chat-username', username)
@@ -14,7 +20,7 @@ function App() {
 
   const chatServiceEndpoint =
     process.env.NODE_ENV === 'production'
-      ? 'wss://intense-plateau-11880.herokuapp.com:34000'
+      ? 'wss://intense-plateau-11880.herokuapp.com'
       : 'ws://localhost:34000'
 
   const socket = io(chatServiceEndpoint)
@@ -31,20 +37,30 @@ function App() {
     console.log('Received: ' + data)
   })
 
-  socket.on('chat message', (msg: any) => {
-    console.log(msg)
+  socket.on('chat_room', (data: any) => {
+    const { username, message } = data
+    chatMessages.push({ username, message })
+    setChatMessages(chatMessages)
   })
 
   socket.on('disconnect', function () {
     console.log('WebSocket Client Disconnected')
   })
 
+  const sendMessageHandler = (message: string): void => {
+    socket.emit('new_message', { message, username })
+  }
+
   return (
     <BrowserRouter>
       <div className="App">
         <Switch>
           <Route exact path="/chat">
-            <ChatPage username={username} />
+            <ChatPage
+              chatMessages={chatMessages}
+              sendMessageHandler={sendMessageHandler}
+              username={username}
+            />
           </Route>
           <Route path="/">
             <LandingPage setUsername={setUsername} />
