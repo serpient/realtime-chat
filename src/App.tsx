@@ -5,11 +5,15 @@ import { LandingPage } from './landing-page'
 import { ChatPage } from './chat-page'
 import './App.scss'
 
-export type Messages = {
+export type ToApiMessages = {
   username: string
   message: string
+  clientTimestamp: Date
 }
 
+export interface Messages extends ToApiMessages {
+  serverTimestamp: Date
+}
 export type ChatRoom = {
   label: string
   name: string
@@ -41,10 +45,11 @@ const createAppConfig = (
   websocketEndpoint: string
   serverEndpoint: string
 } => {
+  console.log(process.env.NODE_ENV)
   if (process.env.NODE_ENV === 'production') {
     return {
       websocketEndpoint: `wss://intense-plateau-11880.herokuapp.com:${serverPort}`,
-      serverEndpoint: 'http://intense-plateau-11880.herokuapp.com'
+      serverEndpoint: 'https://intense-plateau-11880.herokuapp.com'
     }
   } else {
     return defaultAppConfig
@@ -93,9 +98,9 @@ const App = () => {
   })
 
   socket.on('chat_room', (data: any) => {
-    const { username, message } = data
-    chatMessages.push({ username, message })
-    setChatMessages(chatMessages)
+    const { username, message, clientTimestamp, serverTimestamp } = data
+    console.log(data)
+    setChatMessages([...chatMessages, { username, message, clientTimestamp, serverTimestamp }])
   })
 
   socket.on('disconnect', function () {
@@ -103,7 +108,7 @@ const App = () => {
   })
 
   const sendMessageHandler = (message: string): void => {
-    socket.emit('new_message', { message, username })
+    socket.emit('new_message', { message, username, clientTimestamp: new Date().toISOString() })
   }
 
   return (
