@@ -5,32 +5,87 @@ import { LandingPage } from './landing-page'
 import { ChatPage } from './chat-page'
 import './App.scss'
 
-export interface Messages {
+export type Messages = {
   username: string
   message: string
 }
 
-function App() {
+export type ChatRoom = {
+  label: string
+  name: string
+}
+
+type Config = {
+  websocketEndpoint: string
+  serverEndpoint: string
+}
+
+const getRequest = (endpoint: string): Promise<{ data: any }> => {
+  return new Promise(resolve => {
+    fetch(endpoint)
+      .then(response => response.json())
+      .then(data => {
+        resolve(data)
+      })
+  })
+}
+
+const defaultAppConfig = {
+  websocketEndpoint: 'ws://localhost:34000',
+  serverEndpoint: 'http://localhost:34000'
+}
+
+const createAppConfig = (
+  serverPort: string
+): {
+  websocketEndpoint: string
+  serverEndpoint: string
+} => {
+  if (process.env.NODE_ENV === 'production') {
+    return {
+      websocketEndpoint: `wss://intense-plateau-11880.herokuapp.com:${serverPort}`,
+      serverEndpoint: 'http://intense-plateau-11880.herokuapp.com'
+    }
+  } else {
+    return defaultAppConfig
+  }
+}
+
+const App = () => {
   const [username, setUsername] = useState<string>(localStorage.getItem('chat-username') || '')
   const [chatMessages, setChatMessages] = useState<Messages[]>([])
+  const [chatRooms, setChatRooms] = useState<ChatRoom[]>([])
+  const [config, setAppConfig] = useState<Config>(defaultAppConfig)
+  const [error, setError] = useState<{ status: string; message: string }>()
 
   useEffect(() => {
     localStorage.setItem('chat-username', username)
   }, [username])
 
-  const chatServiceEndpoint =
-    process.env.NODE_ENV === 'production'
-      ? 'wss://intense-plateau-11880.herokuapp.com'
-      : 'ws://localhost:34000'
+  useEffect(() => {
+    async function setAppConfigs() {
+      try {
+        const response: { data: { port: string } } = await getRequest('http://localhost:34000/port')
+        const { websocketEndpoint, serverEndpoint } = createAppConfig(response.data.port)
+        const chatRoomResponse: { data: { chatRooms: ChatRoom[] } } = await getRequest(
+          `${serverEndpoint}/chat/rooms`
+        )
+        setChatRooms(chatRoomResponse.data.chatRooms)
+        setAppConfig({ websocketEndpoint, serverEndpoint })
+      } catch (err) {
+        setError({ status: err.status, message: err.message })
+      }
+    }
+    setAppConfigs()
+  }, [])
 
-  const socket = io(chatServiceEndpoint)
+  const socket = io(config.websocketEndpoint, {
+    transports: ['websocket', 'polling', 'flashsocket']
+  })
 
   socket.on('connect', function () {
     console.log('WebSocket Client Connected')
     socket.send('Hi this is web client.')
-    // setInterval(() => {
-    //   socket.emit('chat message', displayName)
-    // }, 1000)
   })
 
   socket.on('event', function (data: any) {
@@ -54,12 +109,14 @@ function App() {
   return (
     <BrowserRouter>
       <div className="App">
+        {error && <div className="error-banner">{error.message || 'An error occured'}</div>}
         <Switch>
           <Route exact path="/chat">
             <ChatPage
               chatMessages={chatMessages}
               sendMessageHandler={sendMessageHandler}
               username={username}
+              chatRooms={chatRooms}
             />
           </Route>
           <Route path="/">

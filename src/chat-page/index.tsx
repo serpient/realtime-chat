@@ -1,34 +1,17 @@
 import React, { useState } from 'react'
-import { Messages } from '../App'
+import { Messages, ChatRoom } from '../App'
 import './ChatPage.scss'
-
-const chatRooms = [
-  {
-    label: 'Water Tribe',
-    name: 'waterTribe'
-  },
-  {
-    label: 'Earth Kingdom',
-    name: 'earthKingdom'
-  },
-  {
-    label: 'Fire Nation',
-    name: 'fireNation'
-  },
-  {
-    label: 'Air Nation',
-    name: 'airNation'
-  }
-]
 
 export const ChatPage = ({
   username,
   sendMessageHandler,
-  chatMessages
+  chatMessages,
+  chatRooms
 }: {
   username: string
   sendMessageHandler: Function
   chatMessages: Messages[]
+  chatRooms: ChatRoom[]
 }): JSX.Element => {
   const [currentRoom, setCurrentRoom] = useState<string>()
   const [input, setInput] = useState<string>('')
