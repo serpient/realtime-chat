@@ -4,7 +4,7 @@ import io from 'socket.io-client'
 import { v4 as uuid } from 'uuid'
 import { LandingPage } from './landing-page'
 import { ChatPage } from './chat-page'
-import { defaultAppConfig, createAppConfig, Config } from './utilities/createAppConfig'
+import { createAppConfig } from './utilities/createAppConfig'
 import { getRequest } from './utilities/getRequest'
 import { scrollToBottom } from './utilities/scrollToBottom'
 import {
@@ -21,7 +21,6 @@ const App = () => {
   const [chatMessageIds] = useState<ChatMessageIds>(new Set())
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([])
   const [currentChatRoom, setCurrentChatRoom] = useState<ChatRoom>()
-  const [config, setConfig] = useState<Config>(defaultAppConfig)
   const [error, setError] = useState<{ status: string; message: string }>()
   const [socket, setSocket] = useState<SocketIOClient.Socket>()
 
@@ -55,10 +54,7 @@ const App = () => {
           defaultChatMessages[room.name] = []
         })
         setChatMessages(defaultChatMessages)
-        setConfig({ websocketEndpoint, serverEndpoint })
-        const socket = io(websocketEndpoint, {
-          transports: ['websocket', 'polling', 'flashsocket']
-        })
+        const socket = io(websocketEndpoint)
         setupSockets(socket)
         setupChatRooms(socket, chatRoomResponse.data.chatRooms, incomingMessageHandler)
         setSocket(socket)
