@@ -16,6 +16,14 @@ export const LandingPage = ({
     history.push('/chat')
   }
 
+  const handleKeyPress = (e: any): void => {
+    const ENTER_KEY = 13
+
+    if (e.which === ENTER_KEY) {
+      handleSubmit()
+    }
+  }
+
   return (
     <div className="display-name-form">
       <label htmlFor={inputName}>
@@ -25,6 +33,7 @@ export const LandingPage = ({
           name={inputName}
           value={input}
           onChange={e => setInput(e.currentTarget.value)}
+          onKeyDown={e => handleKeyPress(e)}
         />
       </label>
       <button onClick={() => handleSubmit()}>Enter Chat Room</button>

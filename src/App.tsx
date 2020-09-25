@@ -1,114 +1,86 @@
 import React, { useEffect, useState } from 'react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import io from 'socket.io-client'
+import { v4 as uuid } from 'uuid'
 import { LandingPage } from './landing-page'
 import { ChatPage } from './chat-page'
+import { defaultAppConfig, createAppConfig, Config } from './utilities/createAppConfig'
+import { getRequest } from './utilities/getRequest'
+import { scrollToBottom } from './utilities/scrollToBottom'
+import {
+  setupSockets,
+  setupChatRooms,
+  sendMessageThroughSocket
+} from './utilities/websocketHandler'
+import { ChatRoom, ChatMessages, ChatMessageIds } from './data/message'
 import './App.scss'
-
-export type ToApiMessages = {
-  username: string
-  message: string
-  clientTimestamp: Date
-}
-
-export interface Messages extends ToApiMessages {
-  serverTimestamp: Date
-}
-export type ChatRoom = {
-  label: string
-  name: string
-}
-
-type Config = {
-  websocketEndpoint: string
-  serverEndpoint: string
-}
-
-const getRequest = (endpoint: string): Promise<{ data: any }> => {
-  return new Promise(resolve => {
-    fetch(endpoint)
-      .then(response => response.json())
-      .then(data => {
-        resolve(data)
-      })
-  })
-}
-
-const defaultAppConfig = {
-  websocketEndpoint: 'ws://localhost:34000',
-  serverEndpoint: 'http://localhost:34000'
-}
-
-const createAppConfig = (
-  serverPort: string
-): {
-  websocketEndpoint: string
-  serverEndpoint: string
-} => {
-  console.log(process.env.NODE_ENV)
-  if (process.env.NODE_ENV === 'production') {
-    return {
-      websocketEndpoint: `wss://intense-plateau-11880.herokuapp.com:${serverPort}`,
-      serverEndpoint: 'https://intense-plateau-11880.herokuapp.com'
-    }
-  } else {
-    return defaultAppConfig
-  }
-}
 
 const App = () => {
   const [username, setUsername] = useState<string>(localStorage.getItem('chat-username') || '')
-  const [chatMessages, setChatMessages] = useState<Messages[]>([])
+  const [chatMessages, setChatMessages] = useState<ChatMessages>({})
+  const [chatMessageIds] = useState<ChatMessageIds>(new Set())
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([])
-  const [config, setAppConfig] = useState<Config>(defaultAppConfig)
+  const [currentChatRoom, setCurrentChatRoom] = useState<ChatRoom>()
+  const [config, setConfig] = useState<Config>(defaultAppConfig)
   const [error, setError] = useState<{ status: string; message: string }>()
+  const [socket, setSocket] = useState<SocketIOClient.Socket>()
 
   useEffect(() => {
     localStorage.setItem('chat-username', username)
   }, [username])
 
   useEffect(() => {
-    async function setAppConfigs() {
+    const incomingMessageHandler = (data: any, roomName: string) => {
+      if (!chatMessageIds.has(data.uuid)) {
+        setChatMessages(prevState => {
+          return {
+            ...prevState,
+            [roomName]: [...prevState[roomName], data]
+          }
+        })
+        chatMessageIds.add(data.uuid)
+        scrollToBottom()
+      }
+    }
+
+    async function setAppConfig() {
       try {
-        const response: { data: { port: string } } = await getRequest('http://localhost:34000/port')
-        const { websocketEndpoint, serverEndpoint } = createAppConfig(response.data.port)
+        const { websocketEndpoint, serverEndpoint } = createAppConfig()
         const chatRoomResponse: { data: { chatRooms: ChatRoom[] } } = await getRequest(
           `${serverEndpoint}/chat/rooms`
         )
         setChatRooms(chatRoomResponse.data.chatRooms)
-        setAppConfig({ websocketEndpoint, serverEndpoint })
+        const defaultChatMessages: ChatMessages = {}
+        chatRoomResponse.data.chatRooms.forEach(room => {
+          defaultChatMessages[room.name] = []
+        })
+        setChatMessages(defaultChatMessages)
+        setConfig({ websocketEndpoint, serverEndpoint })
+        const socket = io(websocketEndpoint, {
+          transports: ['websocket', 'polling', 'flashsocket']
+        })
+        setupSockets(socket)
+        setupChatRooms(socket, chatRoomResponse.data.chatRooms, incomingMessageHandler)
+        setSocket(socket)
       } catch (err) {
         setError({ status: err.status, message: err.message })
       }
     }
-    setAppConfigs()
+    setAppConfig()
+    // eslint-disable-next-line
   }, [])
 
-  const socket = io(config.websocketEndpoint, {
-    transports: ['websocket', 'polling', 'flashsocket']
-  })
-
-  socket.on('connect', function () {
-    console.log('WebSocket Client Connected')
-    socket.send('Hi this is web client.')
-  })
-
-  socket.on('event', function (data: any) {
-    console.log('Received: ' + data)
-  })
-
-  socket.on('chat_room', (data: any) => {
-    const { username, message, clientTimestamp, serverTimestamp } = data
-    console.log(data)
-    setChatMessages([...chatMessages, { username, message, clientTimestamp, serverTimestamp }])
-  })
-
-  socket.on('disconnect', function () {
-    console.log('WebSocket Client Disconnected')
-  })
-
   const sendMessageHandler = (message: string): void => {
-    socket.emit('new_message', { message, username, clientTimestamp: new Date().toISOString() })
+    if (socket && currentChatRoom) {
+      sendMessageThroughSocket(socket, {
+        message,
+        username,
+        clientTimestamp: new Date().toISOString(),
+        chatRoom: currentChatRoom,
+        uuid: uuid()
+      })
+    }
+    // TODO else handle error
   }
 
   return (
@@ -122,6 +94,8 @@ const App = () => {
               sendMessageHandler={sendMessageHandler}
               username={username}
               chatRooms={chatRooms}
+              setCurrentChatRoom={setCurrentChatRoom}
+              currentChatRoom={currentChatRoom}
             />
           </Route>
           <Route path="/">

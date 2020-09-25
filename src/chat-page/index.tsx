@@ -1,19 +1,22 @@
 import React, { useState } from 'react'
-import { Messages, ChatRoom } from '../App'
+import { ChatRoom, ChatMessages } from '../data/message'
 import './ChatPage.scss'
 
 export const ChatPage = ({
   username,
   sendMessageHandler,
   chatMessages,
-  chatRooms
+  chatRooms,
+  setCurrentChatRoom,
+  currentChatRoom
 }: {
   username: string
   sendMessageHandler: Function
-  chatMessages: Messages[]
+  chatMessages: ChatMessages
   chatRooms: ChatRoom[]
+  setCurrentChatRoom: Function
+  currentChatRoom?: ChatRoom
 }): JSX.Element => {
-  const [currentRoom, setCurrentRoom] = useState<string>()
   const [input, setInput] = useState<string>('')
   const inputName = 'chatInput'
 
@@ -43,44 +46,62 @@ export const ChatPage = ({
         </span>
         {chatRooms.map(room => (
           <nav
-            className={`chat-room ${currentRoom === room.name ? 'chat-room--active' : ''} `}
-            onClick={() => setCurrentRoom(room.name)}
+            className={`chat-room ${
+              currentChatRoom && currentChatRoom.name === room.name ? 'chat-room--active' : ''
+            } `}
+            onClick={() => setCurrentChatRoom(room)}
             key={room.name}
           >
             {room.label}
           </nav>
         ))}
       </aside>
-      <section>
-        <div id={`chat_messages`} className="chat-messages">
-          {chatMessages.map((msg, idx) => {
-            return (
-              <div
-                className={`chat-messages--message ${
-                  msg.username === username
-                    ? 'chat-messages--mesage-right'
-                    : 'chat-messages--mesage-left'
-                }`}
-                key={`${msg}_${idx}`}
-              >
-                <p>{msg.message}</p>
-              </div>
-            )
-          })}
-        </div>
-        <div className="chat-input--container">
-          <label htmlFor={inputName}>
-            <p className="visually-hidden">Chat Message Input</p>
-            <input
-              id={inputName}
-              name={inputName}
-              value={input}
-              placeholder="Type a message"
-              onChange={e => handleInput(e)}
-              onKeyDown={e => handleKeyboard(e)}
-            />
-          </label>
-        </div>
+      <section className="chat-messages--container">
+        {currentChatRoom ? (
+          <React.Fragment>
+            <div id="chat_messages" className="chat-messages">
+              {chatMessages[currentChatRoom.name].map((msg, idx) => {
+                return (
+                  <React.Fragment key={`message_bundle_${currentChatRoom.name}_${idx}`}>
+                    <p
+                      key={`username_label_${currentChatRoom.name}_${idx}`}
+                      className={`subtitle ${
+                        msg.username === username ? 'message-right' : 'message-left'
+                      }`}
+                    >
+                      {msg.username}
+                    </p>
+                    <div
+                      key={`message_${currentChatRoom.name}_${idx}`}
+                      className={`chat-messages--message ${
+                        msg.username === username
+                          ? 'chat-messages--user message-right'
+                          : 'chat-messages--other message-left'
+                      }`}
+                    >
+                      <p>{msg.message}</p>
+                    </div>
+                  </React.Fragment>
+                )
+              })}
+            </div>
+            <div className="chat-input--container">
+              <label htmlFor={inputName}>
+                <p className="visually-hidden">Chat Message Input</p>
+                <input
+                  id={inputName}
+                  name={inputName}
+                  value={input}
+                  placeholder="Type a message"
+                  onChange={e => handleInput(e)}
+                  onKeyDown={e => handleKeyboard(e)}
+                />
+              </label>
+            </div>
+          </React.Fragment>
+        ) : (
+          <h1 className="helper-message">Please click a chat room to start chatting!</h1>
+        )}
       </section>
     </main>
   )
