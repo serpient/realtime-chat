@@ -22,10 +22,6 @@ const App = () => {
   const [chatClient, setChatClient] = useState<ChatClient>()
 
   useEffect(() => {
-    localStorage.setItem('chat-username', username)
-  }, [username])
-
-  useEffect(() => {
     async function setAppConfig() {
       try {
         const { websocketEndpoint, serverEndpoint } = createAppConfig()
@@ -83,6 +79,7 @@ const App = () => {
 
   const handleSettingUsername = (username: string): void => {
     setUsername(username)
+    localStorage.setItem('chat-username', username)
   }
 
   return (
@@ -95,6 +92,7 @@ const App = () => {
               chatMessages={chatMessages}
               sendMessageHandler={sendMessageHandler}
               username={username}
+              avatar={avatar}
               chatRooms={chatRooms}
               setCurrentChatRoom={handleChangingChatRoom}
               currentChatRoom={currentChatRoom}

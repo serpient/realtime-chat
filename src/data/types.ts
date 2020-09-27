@@ -19,38 +19,38 @@ export interface Message extends BasicMessage {
   serverTimestamp: string
 }
 
-export interface ApiErrorData {
+export type ApiErrorData = {
   message: string
   status?: number
   errors?: string[]
 }
 
-export interface IncomingMessage {
+export type IncomingMessage = {
   data: Message | null
   error: ApiErrorData | null
 }
 
-export interface OutgoingUserInfo {
+export type OutgoingUserInfo = {
   username: string
   avatar: string
   currentRoom: ChatRoom
 }
 
-export interface UserInfo {
+export type UserInfo = {
   username: string
   avatar: string
 }
 
-export interface UsersPerRoom {
+export type UsersPerRoom = {
   [chatRoomName: string]: UserInfo[]
 }
 
-export interface PresenceData {
+export type PresenceData = {
   usersPerRoom: UsersPerRoom
   serverTimestamp: string
 }
 
-export interface IncomingPresenceInfo {
+export type IncomingPresenceInfo = {
   data: PresenceData | null
   error: ApiErrorData | null
 }
