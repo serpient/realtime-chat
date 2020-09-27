@@ -21,7 +21,7 @@ export interface Message extends BasicMessage {
 
 export interface ApiErrorData {
   message: string
-  status: number
+  status?: number
   errors?: string[]
 }
 

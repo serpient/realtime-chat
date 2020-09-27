@@ -3,10 +3,11 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { v4 as uuid } from 'uuid'
 import { LandingPage } from './landing-page'
 import { ChatPage } from './chat-page'
+import { ErrorBanner } from './error-banner'
 import { createAppConfig } from './utilities/createAppConfig'
 import { getRequest } from './utilities/getRequest'
 import { ChatClient } from './utilities/chatClient'
-import { ChatRoom, ChatMessages, UsersPerRoom } from './data/types'
+import { ChatRoom, ChatMessages, UsersPerRoom, ApiErrorData } from './data/types'
 import './App.scss'
 import { events } from './data/eventNames'
 
@@ -17,7 +18,7 @@ const App = () => {
   const [chatMessages, setChatMessages] = useState<ChatMessages>({})
   const [presenceInfo, setPresenceInfo] = useState<UsersPerRoom>({})
   const [currentChatRoom, setCurrentChatRoom] = useState<ChatRoom>()
-  const [error, setError] = useState<{ status: string; message: string }>()
+  const [error, setError] = useState<ApiErrorData>()
   const [chatClient, setChatClient] = useState<ChatClient>()
 
   useEffect(() => {
@@ -31,18 +32,20 @@ const App = () => {
         const chatRoomResponse: { data: { chatRooms: ChatRoom[] } } = await getRequest(
           `${serverEndpoint}/rooms`
         )
-        setChatRooms(chatRoomResponse.data.chatRooms)
+        const chatRoomsData = chatRoomResponse.data.chatRooms
+        setChatRooms(chatRoomsData)
         const defaultChatMessages: ChatMessages = {}
-        chatRoomResponse.data.chatRooms.forEach(room => {
+        chatRoomsData.forEach(room => {
           defaultChatMessages[room.name] = []
         })
         setChatMessages(defaultChatMessages)
         const client = new ChatClient({
           chatServiceEndpoint: websocketEndpoint,
           clientName: username,
-          chatRooms: chatRoomResponse.data.chatRooms,
+          chatRooms: chatRoomsData,
           setChatMessages,
-          setPresenceInfo
+          setPresenceInfo,
+          setError
         })
         setChatClient(client)
       } catch (err) {
@@ -62,7 +65,6 @@ const App = () => {
         uuid: uuid()
       })
     }
-    // TODO else handle error
   }
 
   const handleChangingChatRoom = (chatRoom: ChatRoom): void => {
@@ -86,7 +88,7 @@ const App = () => {
   return (
     <BrowserRouter>
       <div className="App">
-        {error && <div className="error-banner">{error.message || 'An error occured'}</div>}
+        <ErrorBanner error={error} setError={setError} />
         <Switch>
           <Route exact path="/chat">
             <ChatPage

@@ -11,12 +11,13 @@ import { scrollToBottom } from './scrollToBottom'
 
 export class ChatClient {
   public client: SocketIOClient.Socket
-  public newMessageEventName: string
+  private newMessageEventName: string
   public receivedMessageCount: number
   private chatMessageIds: Set<string>
   public clientName: string
   private setChatMessages: Function
   private setPresenceInfo: Function
+  private setError: Function
 
   constructor({
     chatServiceEndpoint,
@@ -25,7 +26,8 @@ export class ChatClient {
     clientName,
     chatRooms,
     setChatMessages,
-    setPresenceInfo
+    setPresenceInfo,
+    setError
   }: {
     chatServiceEndpoint: string
     newMessageEventName?: string
@@ -34,6 +36,7 @@ export class ChatClient {
     chatRooms: ChatRoom[]
     setChatMessages: Function
     setPresenceInfo: Function
+    setError: Function
   }) {
     this.newMessageEventName = newMessageEventName
     this.clientName = clientName
@@ -41,6 +44,7 @@ export class ChatClient {
     this.chatMessageIds = new Set()
     this.setChatMessages = setChatMessages
     this.setPresenceInfo = setPresenceInfo
+    this.setError = setError
     this.client = io.connect(chatServiceEndpoint, connectOptions)
     this.setupListeners()
     this.setupChatRoomListeners(chatRooms)
@@ -74,8 +78,8 @@ export class ChatClient {
         console.log(`${this.clientName} disconnected`)
       })
       .on(events.ERROR, (response: IncomingMessage | IncomingPresenceInfo) => {
-        // TODO handle error
         console.log(response)
+        this.setError(response.error)
       })
   }
 

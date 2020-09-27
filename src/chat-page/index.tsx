@@ -115,7 +115,7 @@ export const ChatPage = ({
             </div>
           </React.Fragment>
         ) : (
-          <h1 className="helper-message">Please click a chat room to start chatting!</h1>
+          <h1 className="helper-message">Click a chat room to start chatting</h1>
         )}
       </section>
     </main>
