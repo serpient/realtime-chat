@@ -15,9 +15,9 @@
     font-size: 40px;
     font-weight: 500;
     margin-bottom: 30px;
-    color: $purple-200;
+    color: $purple-200 !important;
+    font-size: 30px !important;
     line-height: 40px;
-    text-transform: capitalize;
   }
 }
 

@@ -85,9 +85,9 @@ const App = () => {
   return (
     <BrowserRouter>
       <div className="App">
-        <ErrorBanner error={error} setError={setError} />
         <Switch>
           <PrivateRoute exact path="/chat" username={username}>
+            <ErrorBanner error={error} setError={setError} />
             <ChatPage
               chatMessages={chatMessages}
               sendMessageHandler={sendMessageHandler}

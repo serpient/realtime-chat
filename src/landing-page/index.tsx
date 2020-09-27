@@ -35,7 +35,7 @@ export const LandingPage = ({
 
   return (
     <section className="landing-page--container">
-      <h1>Join HomeChat</h1>
+      <h1 className="logo">join commune</h1>
       <div className="display-name-form">
         <label htmlFor={inputName}>
           Set Your Display Name

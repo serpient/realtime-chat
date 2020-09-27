@@ -18,6 +18,11 @@ export const ChatRoomSelector = ({
 }): JSX.Element => {
   return (
     <aside>
+      <header className="header">
+        <div className="header-contents">
+          <h2 className="logo">commune</h2>
+        </div>
+      </header>
       <span>
         <img src={avatar} alt={`${username}'s avatar`} />
         <h1>Hi {username}!</h1>
@@ -51,7 +56,7 @@ export const ActiveUsersList = ({
   return (
     <ul className="active-users">
       {presenceInfoForRoom &&
-        presenceInfoForRoom.map((activeUser: UserInfo) => {
+        presenceInfoForRoom.map((activeUser: UserInfo): any => {
           if (activeUser.username !== curentUsername) {
             return (
               <li key={`active_user_${activeUser.username}`} className="active-user">
@@ -60,6 +65,7 @@ export const ActiveUsersList = ({
               </li>
             )
           }
+          return null
         })}
     </ul>
   )

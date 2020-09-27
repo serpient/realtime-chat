@@ -6,6 +6,12 @@
   height: 100vh;
   background-color: white;
 
+  .logo {
+    font-family: 'Secular One', sans-serif;
+    font-size: 24px;
+    color: $purple-500;
+  }
+
   .error-banner {
     box-sizing: border-box;
     position: relative;
