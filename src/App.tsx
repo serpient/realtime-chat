@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom'
 import { v4 as uuid } from 'uuid'
 import { LandingPage } from './landing-page'
 import { ChatPage } from './chat-page'
@@ -87,7 +87,7 @@ const App = () => {
       <div className="App">
         <ErrorBanner error={error} setError={setError} />
         <Switch>
-          <Route exact path="/chat">
+          <PrivateRoute exact path="/chat" username={username}>
             <ChatPage
               chatMessages={chatMessages}
               sendMessageHandler={sendMessageHandler}
@@ -98,7 +98,7 @@ const App = () => {
               currentChatRoom={currentChatRoom}
               presenceInfo={presenceInfo}
             />
-          </Route>
+          </PrivateRoute>
           <Route path="/">
             <LandingPage setUsername={handleSettingUsername} />
           </Route>
@@ -109,3 +109,7 @@ const App = () => {
 }
 
 export default App
+
+const PrivateRoute = ({ children, ...rest }: any) => {
+  return rest.username ? <Route {...rest}>{children}</Route> : <Redirect to="/" />
+}

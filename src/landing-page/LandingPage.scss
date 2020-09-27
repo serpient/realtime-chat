@@ -1,12 +1,31 @@
 @import 'styles/shared';
 
-.display-name-form {
+.landing-page--container {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: $purple-800;
+  color: white;
+
+  h1 {
+    width: 350px;
+    font-size: 40px;
+    font-weight: 500;
+    margin-bottom: 30px;
+    color: $purple-200;
+    line-height: 40px;
+    text-transform: capitalize;
+  }
+}
+
+.display-name-form {
+  background-color: white;
+  box-shadow: $box-shadow-theme;
+  padding: 40px 30px;
+  border-radius: 8px;
 
   label {
     font-weight: 500;
@@ -22,5 +41,11 @@
     border-radius: 4px;
     padding: 10px;
     margin-bottom: 20px;
+  }
+
+  .input-error {
+    color: $red-400;
+    margin-top: -14px;
+    margin-bottom: 30px;
   }
 }
