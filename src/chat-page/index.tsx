@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ChatRoom, ChatMessages } from '../data/message'
+import { ChatRoom, ChatMessages, UsersPerRoom } from '../data/types'
 import './ChatPage.scss'
 
 export const ChatPage = ({
@@ -8,7 +8,8 @@ export const ChatPage = ({
   chatMessages,
   chatRooms,
   setCurrentChatRoom,
-  currentChatRoom
+  currentChatRoom,
+  presenceInfo
 }: {
   username: string
   sendMessageHandler: Function
@@ -16,6 +17,7 @@ export const ChatPage = ({
   chatRooms: ChatRoom[]
   setCurrentChatRoom: Function
   currentChatRoom?: ChatRoom
+  presenceInfo: UsersPerRoom
 }): JSX.Element => {
   const [input, setInput] = useState<string>('')
   const inputName = 'chatInput'
@@ -53,6 +55,19 @@ export const ChatPage = ({
             key={room.name}
           >
             {room.label}
+            <div className="active-users">
+              {presenceInfo[room.name] &&
+                presenceInfo[room.name].map(activeUser => {
+                  if (activeUser.username !== username) {
+                    return (
+                      <div key={`active_user_${activeUser.username}`} className="active-user">
+                        <img src={activeUser.avatar} alt={activeUser.username} />
+                        <h5>{activeUser.username}</h5>
+                      </div>
+                    )
+                  }
+                })}
+            </div>
           </nav>
         ))}
       </aside>

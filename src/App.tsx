@@ -1,52 +1,35 @@
 import React, { useEffect, useState } from 'react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
-import io from 'socket.io-client'
 import { v4 as uuid } from 'uuid'
 import { LandingPage } from './landing-page'
 import { ChatPage } from './chat-page'
 import { createAppConfig } from './utilities/createAppConfig'
 import { getRequest } from './utilities/getRequest'
-import { scrollToBottom } from './utilities/scrollToBottom'
-import {
-  setupSockets,
-  setupChatRooms,
-  sendMessageThroughSocket
-} from './utilities/websocketHandler'
-import { ChatRoom, ChatMessages, ChatMessageIds } from './data/message'
+import { ChatClient } from './utilities/chatClient'
+import { ChatRoom, ChatMessages, UsersPerRoom } from './data/types'
 import './App.scss'
+import { events } from './data/eventNames'
 
 const App = () => {
   const [username, setUsername] = useState<string>(localStorage.getItem('chat-username') || '')
-  const [chatMessages, setChatMessages] = useState<ChatMessages>({})
-  const [chatMessageIds] = useState<ChatMessageIds>(new Set())
+  const [avatar] = useState(`https://api.adorable.io/avatars/${50}/${username}`)
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([])
+  const [chatMessages, setChatMessages] = useState<ChatMessages>({})
+  const [presenceInfo, setPresenceInfo] = useState<UsersPerRoom>({})
   const [currentChatRoom, setCurrentChatRoom] = useState<ChatRoom>()
   const [error, setError] = useState<{ status: string; message: string }>()
-  const [socket, setSocket] = useState<SocketIOClient.Socket>()
+  const [chatClient, setChatClient] = useState<ChatClient>()
 
   useEffect(() => {
     localStorage.setItem('chat-username', username)
   }, [username])
 
   useEffect(() => {
-    const incomingMessageHandler = (data: any, roomName: string) => {
-      if (!chatMessageIds.has(data.uuid)) {
-        setChatMessages(prevState => {
-          return {
-            ...prevState,
-            [roomName]: [...prevState[roomName], data]
-          }
-        })
-        chatMessageIds.add(data.uuid)
-        scrollToBottom()
-      }
-    }
-
     async function setAppConfig() {
       try {
         const { websocketEndpoint, serverEndpoint } = createAppConfig()
         const chatRoomResponse: { data: { chatRooms: ChatRoom[] } } = await getRequest(
-          `${serverEndpoint}/chat/rooms`
+          `${serverEndpoint}/rooms`
         )
         setChatRooms(chatRoomResponse.data.chatRooms)
         const defaultChatMessages: ChatMessages = {}
@@ -54,10 +37,14 @@ const App = () => {
           defaultChatMessages[room.name] = []
         })
         setChatMessages(defaultChatMessages)
-        const socket = io(websocketEndpoint)
-        setupSockets(socket)
-        setupChatRooms(socket, chatRoomResponse.data.chatRooms, incomingMessageHandler)
-        setSocket(socket)
+        const client = new ChatClient({
+          chatServiceEndpoint: websocketEndpoint,
+          clientName: username,
+          chatRooms: chatRoomResponse.data.chatRooms,
+          setChatMessages,
+          setPresenceInfo
+        })
+        setChatClient(client)
       } catch (err) {
         setError({ status: err.status, message: err.message })
       }
@@ -67,16 +54,33 @@ const App = () => {
   }, [])
 
   const sendMessageHandler = (message: string): void => {
-    if (socket && currentChatRoom) {
-      sendMessageThroughSocket(socket, {
+    if (chatClient && currentChatRoom) {
+      chatClient.sendMessageToServer({
         message,
         username,
-        clientTimestamp: new Date().toISOString(),
         chatRoom: currentChatRoom,
         uuid: uuid()
       })
     }
     // TODO else handle error
+  }
+
+  const handleChangingChatRoom = (chatRoom: ChatRoom): void => {
+    setCurrentChatRoom(chatRoom)
+    if (chatClient) {
+      chatClient.sendMessageToServer(
+        {
+          username,
+          avatar,
+          currentRoom: chatRoom
+        },
+        events.NEW_PRESENCE_INFORMATION
+      )
+    }
+  }
+
+  const handleSettingUsername = (username: string): void => {
+    setUsername(username)
   }
 
   return (
@@ -90,12 +94,13 @@ const App = () => {
               sendMessageHandler={sendMessageHandler}
               username={username}
               chatRooms={chatRooms}
-              setCurrentChatRoom={setCurrentChatRoom}
+              setCurrentChatRoom={handleChangingChatRoom}
               currentChatRoom={currentChatRoom}
+              presenceInfo={presenceInfo}
             />
           </Route>
           <Route path="/">
-            <LandingPage setUsername={setUsername} />
+            <LandingPage setUsername={handleSettingUsername} />
           </Route>
         </Switch>
       </div>
