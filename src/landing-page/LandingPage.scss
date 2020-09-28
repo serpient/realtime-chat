@@ -7,7 +7,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: $purple-800;
+  background-color: $purple-100;
   color: white;
 
   h1 {
@@ -15,7 +15,7 @@
     font-size: 40px;
     font-weight: 500;
     margin-bottom: 30px;
-    color: $purple-200 !important;
+    color: $purple-600 !important;
     font-size: 30px !important;
     line-height: 40px;
   }
@@ -28,8 +28,8 @@
   border-radius: 8px;
 
   label {
-    font-weight: 500;
-    color: $grey-800;
+    font-weight: 600;
+    color: $grey-700;
     input {
       display: block;
     }
@@ -37,7 +37,8 @@
   input {
     min-width: 300px;
     max-width: 90vw;
-    background-color: $grey-200;
+    background-color: $grey-100;
+    border: 1px solid $grey-200;
     border-radius: 4px;
     padding: 10px;
     margin-bottom: 20px;

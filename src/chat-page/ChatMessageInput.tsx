@@ -7,18 +7,21 @@ export const ChatMessageInput = ({
 }): JSX.Element => {
   const [input, setInput] = useState<string>('')
   const inputName = 'chatInput'
+  const ENTER_KEY = 13
 
   const handleInput = (e: any): void => {
     e.preventDefault()
-    setInput(e.currentTarget.value)
+    if (e.currentTarget.value === '\n') {
+      setInput('')
+    } else {
+      setInput(e.currentTarget.value)
+    }
   }
 
   const handleKeyboard = (e: any): void => {
-    const ENTER_KEY = 13
-
     if (e.which === ENTER_KEY) {
-      sendMessageHandler(input)
       setInput('')
+      sendMessageHandler(input)
     }
   }
 
@@ -30,6 +33,7 @@ export const ChatMessageInput = ({
           id={inputName}
           name={inputName}
           value={input}
+          autoFocus
           placeholder="Type a message"
           onChange={e => handleInput(e)}
           onKeyDown={e => handleKeyboard(e)}
