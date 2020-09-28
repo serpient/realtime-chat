@@ -26,7 +26,7 @@ export const ChatMessageInput = ({
     <div className="chat-input--container">
       <label htmlFor={inputName}>
         <p className="visually-hidden">Chat Message Input</p>
-        <input
+        <textarea
           id={inputName}
           name={inputName}
           value={input}
