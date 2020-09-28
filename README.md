@@ -13,7 +13,7 @@ yarn start
 
 Application is deployed and can be played with here: [https://clever-aryabhata-d8e12c.netlify.app/](https://clever-aryabhata-d8e12c.netlify.app/).
 
-The project utilities github actions to handle running tests with each commit. Netlify handles the automatic deployment to the deployed site.
+The project uses github actions to handle running tests with each commit. Netlify handles the automatic deployment to the deployed site.
 
 ## Technical Stack
 
