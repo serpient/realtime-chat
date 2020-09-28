@@ -1,44 +1,42 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![walkthrough](https://p23.f4.n0.cdn.getcloudapp.com/items/Z4uyeLPO/Screen%20Recording%202020-09-27%20at%2009.58.39%20PM.gif?source=viewer&v=20fc19b13b6e397d8624ea35e5f985f8)
 
-## Available Scripts
+## Quick Start
 
-In the project directory, you can run:
+```bash
+git clone https://github.com/serpient/realtime-chat.git
+cd realtime-chat
+yarn install
+yarn start
+```
 
-### `yarn start`
+## Deployment
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Application is deployed and can be played with here: [https://clever-aryabhata-d8e12c.netlify.app/](https://clever-aryabhata-d8e12c.netlify.app/).
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+The project utilities github actions to handle running tests with each commit. Netlify handles the automatic deployment to the deployed site.
 
-### `yarn test`
+## Technical Stack
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The project utilizes:
 
-### `yarn build`
+- [Create React App](https://github.com/facebook/create-react-app)
+- Socket.io Client
+- SCSS for styling
+- TypeScript
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Features
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+Commune is a group chat application where users can jump in and out of conversations surrounding a topic.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- A user can join the chat room only after a display name is set
+- A user can enter one of the existing chat rooms and start chatting. Messages are on a per-room basis.
+- Chats between connected users will only persist while they are on the page. No persistence has been implemented yet.
+- If another user is also connected, their current room presence will be shown in the chat-room navigation panel
+- Errors returned from the websocket API will be rendered in an error banner
+- Mobile responsiveness
+  ![mobile responsiveness walkthrough](https://p23.f4.n0.cdn.getcloudapp.com/items/rRuoq9E7/Screen%20Recording%202020-09-27%20at%2010.01.44%20PM.gif?source=viewer&v=042357b8190170925a207728261a741b)
 
-### `yarn eject`
+## Future refactor
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+- There are a lot of duplication of types and the client-socket class between the frontend and backend. I would use a library like `nx` that allow me to organize the 2 projects in one repo, and extract the common types and socket clients into a separate module that can be easily used by both.
+- E2E tests for application flows using a tool like Cypress. I ultimately ran out of time but was reluctantly ok with this tradeoff given that the application feature set is mostly dependent on socket behavior, which has backend e2e tests.
