@@ -24,6 +24,9 @@ jobs:
 
     - name: Run test
       run: npm run test
+
+    - name: Run build
+      run: npm run build
       
     - name: Publish
       uses: netlify/actions/build@master
