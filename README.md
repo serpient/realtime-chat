@@ -32,10 +32,13 @@ Commune is a group chat application where users can jump in and out of conversat
 - A user can enter one of the existing chat rooms and start chatting. Messages are on a per-room basis.
 - Chats between connected users will only persist while they are on the page. No persistence has been implemented yet.
 - If another user is also connected, their current room presence will be shown in the chat-room navigation panel
-![presence feature](https://p23.f4.n0.cdn.getcloudapp.com/items/E0urWpy7/Screen%20Recording%202020-09-28%20at%2010.44.05%20AM.gif?source=viewer&v=cea9db1bfb7381b520ffc78ee201c913)
 - Errors returned from the websocket API will be rendered in an error banner
 - Mobile responsiveness
-  ![mobile responsiveness walkthrough](https://p23.f4.n0.cdn.getcloudapp.com/items/rRuoq9E7/Screen%20Recording%202020-09-27%20at%2010.01.44%20PM.gif?source=viewer&v=042357b8190170925a207728261a741b)
+
+#### Mobile Responsiveness 
+![mobile responsiveness walkthrough](https://p23.f4.n0.cdn.getcloudapp.com/items/rRuoq9E7/Screen%20Recording%202020-09-27%20at%2010.01.44%20PM.gif?source=viewer&v=042357b8190170925a207728261a741b)
+#### Presence Feature 
+![presence feature](https://p23.f4.n0.cdn.getcloudapp.com/items/E0urWpy7/Screen%20Recording%202020-09-28%20at%2010.44.05%20AM.gif?source=viewer&v=cea9db1bfb7381b520ffc78ee201c913)
 
 ## Future refactor
 
