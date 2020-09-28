@@ -1,5 +1,6 @@
 import React from 'react'
 import { ChatRoom, UsersPerRoom, UserInfo } from '../data/types'
+import './ChatRoomSelector.scss'
 
 export const ChatRoomSelector = ({
   username,
@@ -7,7 +8,8 @@ export const ChatRoomSelector = ({
   chatRooms,
   currentChatRoom,
   setCurrentChatRoom,
-  presenceInfo
+  presenceInfo,
+  style
 }: {
   username: string
   avatar: string
@@ -15,33 +17,32 @@ export const ChatRoomSelector = ({
   currentChatRoom: ChatRoom | undefined
   setCurrentChatRoom: Function
   presenceInfo: UsersPerRoom
+  style: object
 }): JSX.Element => {
   return (
-    <aside>
-      <header className="header">
-        <div className="header-contents">
-          <h2 className="logo">commune</h2>
-        </div>
-      </header>
-      <span>
-        <img src={avatar} alt={`${username}'s avatar`} />
-        <h1>Hi {username}!</h1>
-      </span>
-      {chatRooms.map((room: ChatRoom) => (
-        <nav
-          className={`chat-room ${
-            currentChatRoom && currentChatRoom.name === room.name ? 'chat-room--active' : ''
-          } `}
-          onClick={() => setCurrentChatRoom(room)}
-          key={room.name}
-        >
-          {room.label}
-          <ActiveUsersList
-            presenceInfoForRoom={presenceInfo[room.name]}
-            curentUsername={username}
-          />
-        </nav>
-      ))}
+    <aside style={style} className="chat-room-selector--container">
+      <React.Fragment>
+        <span>
+          <img src={avatar} alt={`${username}'s avatar`} />
+          <h1>Hi {username}!</h1>
+        </span>
+        {chatRooms.map((room: ChatRoom) => (
+          <nav
+            tabIndex={0}
+            className={`chat-room ${
+              currentChatRoom && currentChatRoom.name === room.name ? 'chat-room--active' : ''
+            } `}
+            onClick={() => setCurrentChatRoom(room)}
+            key={room.name}
+          >
+            {room.label}
+            <ActiveUsersList
+              presenceInfoForRoom={presenceInfo[room.name]}
+              curentUsername={username}
+            />
+          </nav>
+        ))}
+      </React.Fragment>
     </aside>
   )
 }

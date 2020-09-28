@@ -51,7 +51,9 @@ export const LandingPage = ({
           />
         </label>
         {validationError && <p className="input-error">{validationError}</p>}
-        <button onClick={() => handleSubmit()}>Enter Chat Room</button>
+        <button className="main-btn" onClick={() => handleSubmit()}>
+          Enter Chat Room
+        </button>
       </div>
     </section>
   )

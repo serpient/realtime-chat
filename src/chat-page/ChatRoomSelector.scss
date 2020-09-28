@@ -1,0 +1,71 @@
+@import 'styles/shared';
+
+.chat-room-selector--container {
+  border-right: 3px solid $grey-100;
+  max-height: 100vh;
+  height: calc(100% - 50px);
+  overflow-y: auto;
+  background-color: white;
+  width: 275px;
+  margin-top: 40px;
+  position: relative;
+
+  span {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px;
+    border-bottom: 1px solid $grey-100;
+    img {
+      width: 30px;
+      height: 30px;
+      object-fit: cover;
+      border-radius: 20px;
+      margin-right: 16px;
+    }
+    h1 {
+      font-size: 18px;
+    }
+  }
+
+  nav {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 16px;
+  }
+}
+
+.chat-room--active {
+  background-color: $purple-500;
+  color: white;
+  font-weight: 600;
+}
+
+.active-users {
+  display: flex;
+  flex-direction: row;
+  .active-user {
+    img {
+      border-radius: 50%;
+      width: 25px;
+      height: 25px;
+      object-fit: cover;
+      margin: 3px;
+    }
+    h5 {
+      display: none;
+      position: absolute;
+      font-size: 12px;
+      color: $grey-100;
+      padding: 3px 6px;
+      background-color: $grey-900;
+      width: min-content;
+      border-radius: 6px;
+    }
+    img:hover + h5 {
+      display: block;
+    }
+  }
+}

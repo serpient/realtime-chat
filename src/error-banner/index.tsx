@@ -15,7 +15,7 @@ export const ErrorBanner = ({
     <div className="error-banner">
       <div className="error-banner-content">
         An error occured. {error.message ? `Error details: ${error.message}` : ''}
-        <button onClick={() => setError({ message: '' })}>
+        <button className="main-btn" onClick={() => setError({ message: '' })}>
           <p className="visually-hidden">Close error</p>X
         </button>
       </div>

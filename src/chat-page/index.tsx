@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ChatRoom, ChatMessages, UsersPerRoom } from '../data/types'
 import { ChatMessagesPanel } from './ChatMessagesPanel'
 import { ChatMessageInput } from './ChatMessageInput'
@@ -24,9 +24,22 @@ export const ChatPage = ({
   currentChatRoom?: ChatRoom
   presenceInfo: UsersPerRoom
 }): JSX.Element => {
+  const [menuIsExpanded, setMenuVisibility] = useState(true)
   return (
-    <main className="chat-page--container">
+    <section className="chat-page--container">
+      <header className="header">
+        <button
+          tabIndex={0}
+          onClick={() => setMenuVisibility(!menuIsExpanded)}
+          className="mobile-menu"
+        >
+          <p className="visually-hidden">Expand menu</p>
+          <i className="fas fa-ellipsis-h"></i>
+        </button>
+        <h2 className="logo">commune</h2>
+      </header>
       <ChatRoomSelector
+        style={menuIsExpanded ? { display: 'block' } : { display: 'none' }}
         username={username}
         avatar={avatar}
         chatRooms={chatRooms}
@@ -48,6 +61,6 @@ export const ChatPage = ({
           <h1 className="helper-message">Click a chat room to start chatting</h1>
         )}
       </section>
-    </main>
+    </section>
   )
 }
