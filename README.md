@@ -44,3 +44,4 @@ Commune is a group chat application where users can jump in and out of conversat
 
 - There are a lot of duplication of types and the client-socket class between the frontend and backend. I would use a library like `nx` that allow me to organize the 2 projects in one repo, and extract the common types and socket clients into a separate module that can be easily used by both.
 - E2E tests for application flows using a tool like Cypress. I ultimately ran out of time but was reluctantly ok with this tradeoff given that the application feature set is mostly dependent on socket behavior, which has backend e2e tests.
+- Handle failed calls to the API/Websocket (network failures)
